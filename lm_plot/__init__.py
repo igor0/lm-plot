@@ -13,7 +13,7 @@ def collect(path_name, name_parser):
     
     return _Eval(df)
 
-def read_pickle(file_path):
+def read_feather(file_path):
     df = pd.read_feather(file_path)
     
     return _Eval(df)
