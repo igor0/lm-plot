@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
 
-DEFAULT_METRICS = ["acc", "ppl"]
+# metric to use when unspecified, in priority order
+DEFAULT_METRICS = ["acc", "word_perplexity"]
 
 def _plot_multi(
     df,
