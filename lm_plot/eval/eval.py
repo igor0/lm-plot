@@ -58,3 +58,6 @@ class _LMEval:
 
     def raw(self):
         return self.df_
+
+    def all(self, axis):
+        return sorted(self.df_[axis].unique().tolist())
