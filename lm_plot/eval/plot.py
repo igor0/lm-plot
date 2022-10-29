@@ -7,7 +7,7 @@ DEFAULT_METRICS = ["acc", "byte_perplexity"]
 
 def _plot_multi(
     df,
-    primary,
+    grid,
     x,
     title_prefix=None,
     metric=None,
@@ -16,16 +16,16 @@ def _plot_multi(
 ):      
     col_num = 3
     plot_dim = (7, 5)
-    primary_vals = axes[primary]
-    row_num = (len(primary_vals) + (col_num - 1)) // col_num
+    grid_vals = axes[grid]
+    row_num = (len(grid_vals) + (col_num - 1)) // col_num
     f = plt.figure(figsize=(plot_dim[0] * col_num, plot_dim[1] * row_num))
 
     gs = f.add_gridspec(row_num, col_num)
 
-    for i in range(len(primary_vals)):
-        primary_val = primary_vals[i]
+    for i in range(len(grid_vals)):
+        grid_val = grid_vals[i]
         cur_axes = axes
-        cur_axes[primary_axis] = primary_val
+        cur_axes[grid_axis] = grid_val
         ax = f.add_subplot(gs[i // col_num, i % col_num])
         _plot_one(df, **axes)
 
