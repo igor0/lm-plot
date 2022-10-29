@@ -19,7 +19,7 @@ class _LMEval:
     ):
         return _plot_one(
             self.df_,
-            x,
+            x=x,
             title_prefix=title_prefix,
             metric=metric,
             legend=legend,
@@ -28,7 +28,7 @@ class _LMEval:
 
     def plot_multi(
         self,
-        multiplot_axis,
+        grid,
         x,
         title_prefix=None,
         metric=None,
@@ -37,8 +37,8 @@ class _LMEval:
     ):
         return _plot_multi(
             self.df_,
-            multiplot_axis,
-            x,
+            grid=grid,
+            x=x,
             title_prefix=None,
             metric=None,
             legend=True,
