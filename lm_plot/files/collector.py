@@ -14,11 +14,11 @@ def _collect(pathname, name_parser) :
             print("WARNING: cannot parse results file name '{}'".format(file_name))
             continue
 
-        record = dict()
+        header = dict()
 
         run_id = m[1]
-        record['path'] = file_name
-        record['timestamp'] = m[2]
+        header['path'] = file_name
+        header['timestamp'] = m[2]
 
         # Parse the file name and add
         metadata = name_parser.parse(run_id)
@@ -35,6 +35,7 @@ def _collect(pathname, name_parser) :
 
         for task in result_json.keys():
             for metric in result_json[task]:
+                record = header.copy()
                 record["task"] = task
                 record["metric"] = metric
                 record["value"] = result_json[task][metric]

@@ -1,11 +1,1 @@
-import json
-
-class _Eval:
-    def __init__(self, df):
-        self.df_ = df
-    
-    def to_pickle(self, path):
-        self.df_.to_pickle(path)
-
-    def pandas():
-        return self.df_
+from lm_plot.eval.eval import _Eval
