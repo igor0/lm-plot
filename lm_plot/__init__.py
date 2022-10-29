@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 
-from lm_plot.eval import _Eval
+from lm_plot.eval import _LMEval
 from lm_plot.files.collector import _collect
 
 def collect(path_name, name_parser):
@@ -11,9 +11,9 @@ def collect(path_name, name_parser):
     for name, dtype in name_parser.columns():
         df[name] = df[name].astype(dtype)
     
-    return _Eval(df)
+    return _LMEval(df)
 
 def read_feather(file_path):
     df = pd.read_feather(file_path)
     
-    return _Eval(df)
+    return _LMEval(df)

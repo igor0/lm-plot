@@ -7,7 +7,7 @@ DEFAULT_METRICS = ["acc", "ppl"]
 def _plot_multi(
     df,
     multiplot_axis,
-    x_axis,
+    x,
     title_prefix=None,
     metric=None,
     legend=True,
@@ -30,7 +30,7 @@ def _plot_multi(
 
 def _plot_one(
     df,
-    x_axis,
+    x,
     title_prefix=None,
     metric=None,
     legend=True,
@@ -38,13 +38,20 @@ def _plot_one(
 ):
     df, title, display_metric, hue = _data(
         df,
-        x_axis=x_axis,
+        x=x,
         title_prefix=title_prefix,
         metric=metric,
         **axes
     )
 
-    p = sns.lineplot(data=df, x=x_axis, y=display_metric, hue=hue, style=hue)
+    p = sns.lineplot(
+        data=df,
+        x=x,
+        y=display_metric,
+        hue=hue,
+        style=hue,
+        legend="auto" if legend else False,
+    )
     p.set_title(title)
 
     return p
@@ -57,7 +64,7 @@ def _metric_display_name(metric):
         return "accuracy"
     return _display_name("metric", metric)
 
-def _data(df, x_axis, title_prefix=None, metric=None, **axes):
+def _data(df, x, title_prefix=None, metric=None, **axes):
     if metric is None:
         metric = _default_metric(df)
     
@@ -67,7 +74,7 @@ def _data(df, x_axis, title_prefix=None, metric=None, **axes):
             axes_flat.append((key, axes[key]))
     display_metric = _metric_display_name(metric)
     
-    expr = df[x_axis].notnull() & (df["metric"] == metric)
+    expr = df[x].notnull() & (df["metric"] == metric)
     lists = 0
     hue = None
     hue_constraint = None

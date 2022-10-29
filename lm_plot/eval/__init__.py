@@ -1,1 +1,1 @@
-from lm_plot.eval.eval import _Eval
+from lm_plot.eval.eval import _LMEval
