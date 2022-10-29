@@ -66,16 +66,12 @@ def _metric_display_name(metric):
     return _display_name("metric", metric)
 
 def _data(df, x, title_prefix=None, metric=None, **axes):
-    if metric is None:
-        metric = _default_metric(df)
-    
     axes_flat = []
     for key in axes.keys():
         if axes[key] is not None:
             axes_flat.append((key, axes[key]))
-    display_metric = _metric_display_name(metric)
     
-    expr = df[x].notnull() & (df["metric"] == metric)
+    expr = df[x].notnull()
     lists = 0
     hue = None
     hue_constraint = None
@@ -97,6 +93,13 @@ def _data(df, x, title_prefix=None, metric=None, **axes):
             lists = lists + 1
     if lists > 1:
         raise ValueError("At most one of the axes can be a list")
+
+    if metric is None:
+        metric = _default_metric(df[expr])
+
+    display_metric = _metric_display_name(metric)
+
+    expr = expr & (df["metric"] == metric)
 
     df = df[expr].rename(columns={"value": display_metric})
     if hue is not None:
