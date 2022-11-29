@@ -4,7 +4,7 @@ import os
 import re
 
 def _collect(pathname, meta_extractor) :
-    rgx_file_name = re.compile("^(.*)_?eval_results_([0-9-]+).json$")
+    rgx_file_name = re.compile("^(?:(.*)_)?eval_results_([0-9-]+).json$")
 
     dict_list = []
     for file_path in glob.glob(pathname):
