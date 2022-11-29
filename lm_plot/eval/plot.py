@@ -47,7 +47,7 @@ def _plot_one(
         y=display_metric,
         hue=hue,
         style=hue,
-        legend="auto" if legend else False,
+        legend=legend,
     )
     p.set_title(title)
 

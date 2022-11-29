@@ -41,7 +41,7 @@ class _LMEval:
             x=x,
             title_prefix=None,
             metric=None,
-            legend=True,
+            legend=legend,
             **axes,
         )
 
