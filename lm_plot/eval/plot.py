@@ -16,7 +16,7 @@ def _plot_multi(
     row_num = (len(grid_vals) + (col_num - 1)) // col_num
     f = plt.figure(figsize=(plot_dim[0] * col_num, plot_dim[1] * row_num))
 
-    gs = f.add_gridspec(row_num, col_num)
+    gs = f.add_gridspec(row_num, col_num, hspace=0.3)
 
     for i in range(len(grid_vals)):
         grid_val = grid_vals[i]
