@@ -1,3 +1,4 @@
+import itertools
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
@@ -5,8 +6,9 @@ import seaborn as sns
 # metric to use when left unspecified, in priority order
 DEFAULT_METRICS = ["acc", "byte_perplexity"]
 
-def _plot_multi(
+def _plot_grid(
     df,
+    plot_type,
     grid,
     **args,
 ):
@@ -23,10 +25,11 @@ def _plot_multi(
         cur_args = args
         cur_args[grid] = grid_val
         ax = f.add_subplot(gs[i // col_num, i % col_num])
-        _plot_one(df, **args)
+        p = _plot_one(df, plot_type, **args)
 
 def _plot_one(
     df,
+    plot_type,
     x=None,
     title_prefix=None,
     metric=None,
@@ -41,20 +44,34 @@ def _plot_one(
         **axes
     )
 
-    p = sns.lineplot(
-        data=df,
-        x=x,
-        y=display_metric,
-        hue=hue,
-        style=hue,
-        legend=legend,
-    )
-    p.set_title(title)
+    if df is None:
+        return None
 
+    if plot_type == "bar":
+        p = sns.barplot(
+            data=df,
+            x=x,
+            y=display_metric,
+            hue=hue,
+        )
+        if legend is False:
+            p.legend([],[], frameon=False)
+    elif plot_type == "line":
+        p = sns.lineplot(
+            data=df,
+            x=x,
+            y=display_metric,
+            hue=hue,
+            style=hue,
+            legend=legend,
+        )
+
+    p.set_title(title)
     return p
 
 def _display_name(axis, value):
-    return value.replace('_', ' ')
+    return value.replace('_', ' ') if value is str else str(value)
+
 
 def _metric_display_name(metric):
     if metric == "acc":
@@ -66,17 +83,24 @@ def _data(df, x, title_prefix=None, metric=None, **axes):
     for key in axes.keys():
         if axes[key] is not None:
             axes_flat.append((key, axes[key]))
-    
-    expr = df[x].notnull()
+
     lists = 0
     hue = None
     hue_constraint = None
     title = title_prefix
-    
+
     for axis, constraint in axes_flat:
+        try:
+            if type(constraint) is not list and type(constraint) is not str:
+                it = iter(constraint)
+                constraint = list(it)
+            is_iterable = True
+        except TypeError:
+            is_iterable = False
+
         if type(constraint) is not list:
             expr = expr & (df[axis] == constraint)
-            
+
             constraint_display = _display_name(axis, constraint)
             if title is None:
                 title = constraint_display
@@ -84,14 +108,29 @@ def _data(df, x, title_prefix=None, metric=None, **axes):
                 title = title + ", " + constraint_display
         else:
             expr = expr & (df[axis].isin(constraint))
-            hue = axis
-            hue_constraint = constraint
-            lists = lists + 1
+            if axis != x:
+                hue = axis
+                hue_constraint = constraint
+                lists = lists + 1
     if lists > 1:
-        raise ValueError("At most one of the axes can be a list")
+        print("ERROR: Too many constraints are specified as lists. Only the following constraints")
+        print("may be lists:")
+        print("")
+        print("    1. x-axis constraint")
+        print("    2. grid constraint (in line_multi and bar_multi)")
+        print("    3. one additional axis to represent multiple series in the chart")
+        print("")
+        print("Any additional constraints must be scalars.")
+
+        raise ValueError("Too many constraints are specified as lists.")
 
     if metric is None:
         metric = _default_metric(df[expr])
+        if metric is None:
+            metrics = df[expr]["metric"].unique()
+
+            print("WARNING: None of the metrics is a default metric:", metrics)
+            return None, None, None, None
 
     display_metric = _metric_display_name(metric)
 
@@ -108,8 +147,14 @@ def _default_metric(df):
     def_met = DEFAULT_METRICS
 
     metric_id = min(
-        def_met.index(m) if m in def_met else len(def_met)
-        for m in df["metric"]
+        (
+          def_met.index(m) if m in def_met else len(def_met)
+          for m in df["metric"]
+        ),
+        default=None
     )
+
+    if metric_id is None:
+        return None
 
     return def_met[metric_id] if metric_id < len(def_met) else None
