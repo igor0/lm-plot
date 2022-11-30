@@ -84,6 +84,8 @@ def _data(df, x, title_prefix=None, metric=None, **axes):
         if axes[key] is not None:
             axes_flat.append((key, axes[key]))
 
+    expr = df[x].notnull()
+
     lists = 0
     hue = None
     hue_constraint = None
